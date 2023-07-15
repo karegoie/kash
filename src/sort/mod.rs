@@ -2,6 +2,8 @@
 pub mod sort {
     use std::collections::HashMap;
     use rayon::prelude::*;
+    use std::sync::{Arc, Mutex};
+
     fn occurence_count(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, u16>>) -> HashMap<u16, usize> {
         let mut kmer_occurence: HashMap<u16, usize> = HashMap::new();
         for (_, value) in kmer_count.iter() {
@@ -17,20 +19,25 @@ pub mod sort {
         kmer_occurence
     }
 
-    // occurence_count_parallel with rayon
+    // occurence_count_parallel with rayon and Arc and Mutex
     fn occurence_count_parallel(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, u16>>) -> HashMap<u16, usize> {
-        let mut kmer_occurence: HashMap<u16, usize> = HashMap::new();
+        let kmer_occurence: Arc<Mutex<HashMap<u16, usize>>> = Arc::new(Mutex::new(HashMap::new()));
+
         kmer_count.par_iter().for_each(|(_, value)| {
-            value.par_iter().for_each(|(_, count)| {
-                let count = *count;
-                if let Some(occurence) = kmer_occurence.get_mut(&count) {
+            value.iter().for_each(|(_, count)| {
+                let mut kmer_occurence = kmer_occurence.lock().unwrap();
+                if let Some(occurence) = kmer_occurence.get_mut(count) {
                     *occurence += 1;
                 } else {
-                    kmer_occurence.insert(count, 1);
+                    kmer_occurence.insert(*count, 1);
                 }
             });
         });
-        kmer_occurence
+
+        Arc::try_unwrap(kmer_occurence)
+            .unwrap()
+            .into_inner()
+    .unwrap()
     }
 
     // sort hashmap by key, returns a vector of sorted values
@@ -48,7 +55,7 @@ pub mod sort {
     }
 
     pub fn sort_by_occurrence(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, u16>>) -> Vec<usize> {
-        let kmer_occurence = occurence_count(kmer_count);
+        let kmer_occurence = occurence_count_parallel(kmer_count);
         let sorted_values = sort_by_key(kmer_occurence);
         sorted_values // Sorted values by occurrence (x-axis is k-mer occurrence, y-axis is number of k-mers)
     }

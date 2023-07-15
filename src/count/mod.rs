@@ -5,8 +5,8 @@ use rayon::prelude::*;
 
 fn set_parameters() -> HashMap<&'static str, &'static str> {
     let mut parameters = HashMap::new();
-    parameters.insert("file", "data/cotton.fna");
-    parameters.insert("kmer", "13");
+    parameters.insert("file", "data/test.fa");
+    parameters.insert("kmer", "3");
     parameters.insert("ploidy", "2");
     parameters
 }

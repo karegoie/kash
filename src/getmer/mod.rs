@@ -30,7 +30,7 @@ pub fn get_mers_from_index(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, u16>>,
     for (key, value) in kmer_count.iter() {
         for (kmer, count) in value.iter() {
             // if count equals to index, insert into kmer_count_has_index
-            if *count == index + 1 {
+            if *count == index {
                 if let Some(kmer_count_has_index_value) = kmer_count_has_index.get_mut(key) {
                     kmer_count_has_index_value.push(kmer.to_vec());
                 } else {
@@ -47,7 +47,7 @@ pub fn get_mers_from_index_parallel(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8
 
     kmer_count.par_iter().for_each(|(key, value)| {
         value.iter().for_each(|(kmer, count)| {
-            if *count == index + 1 {
+            if *count == index {
                 let mut kmer_count_has_index = kmer_count_has_index.lock().unwrap();
                 if let Some(kmer_count_has_index_value) = kmer_count_has_index.get_mut(key) {
                     kmer_count_has_index_value.push(kmer.to_vec());
