@@ -5,7 +5,7 @@ use std::sync::{Arc, Mutex};
 use rayon::prelude::*;
 
 // differentiate the vector and return derivatives
-pub fn differentiate(values: Vec<usize>) -> Vec<i32> {
+pub fn differentiate(values: &Vec<usize>) -> Vec<i32> {
     let mut derivatives: Vec<i32> = Vec::new();
     for i in 0..values.len() - 1 {
         let derivative = values[i+1] as i32 - values[i] as i32;
@@ -15,11 +15,11 @@ pub fn differentiate(values: Vec<usize>) -> Vec<i32> {
 }
 
 // returns the index where derivative turns positive to negative
-pub fn find_index(derivatives: Vec<i32>) -> Vec<u16> {
+pub fn find_index(derivatives: Vec<i32>) -> Vec<usize> {
     let mut index = Vec::new();
     for i in 0..derivatives.len() - 1 {
         if derivatives[i] > 0 && derivatives[i+1] < 0 {
-            index.push(i as u16);
+            index.push(i);
         }
     }
     index
@@ -30,7 +30,7 @@ pub fn get_mers_from_index(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, u16>>,
     for (key, value) in kmer_count.iter() {
         for (kmer, count) in value.iter() {
             // if count equals to index, insert into kmer_count_has_index
-            if *count == index {
+            if *count == index + 1 {
                 if let Some(kmer_count_has_index_value) = kmer_count_has_index.get_mut(key) {
                     kmer_count_has_index_value.push(kmer.to_vec());
                 } else {
@@ -42,12 +42,12 @@ pub fn get_mers_from_index(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, u16>>,
     kmer_count_has_index
 }
 
-pub fn get_mers_from_index_parallel(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, u16>>, index: u16) -> HashMap<Vec<u8>, Vec<Vec<u8>>> {
+pub fn get_mers_from_index_parallel(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, usize>>, index: usize, coverage_per_occurrence: HashMap<usize, Vec<usize>>) -> HashMap<Vec<u8>, Vec<Vec<u8>>> {
     let kmer_count_has_index: Arc<Mutex<HashMap<Vec<u8>, Vec<Vec<u8>>>>> = Arc::new(Mutex::new(HashMap::new()));
 
     kmer_count.par_iter().for_each(|(key, value)| {
         value.iter().for_each(|(kmer, count)| {
-            if *count == index {
+            if coverage_per_occurrence[&(index + 1)].contains(count) {
                 let mut kmer_count_has_index = kmer_count_has_index.lock().unwrap();
                 if let Some(kmer_count_has_index_value) = kmer_count_has_index.get_mut(key) {
                     kmer_count_has_index_value.push(kmer.to_vec());
@@ -76,11 +76,11 @@ fn same_kmer_numer_as_distance(seq1: &Vec<Vec<u8>>, seq2: &Vec<Vec<u8>>) -> f32 
     (1f32)/ (distance as f32 / (seq1.len() + seq2.len()) as f32)
 }
 
-pub fn build_condensed_distance_matrix(target: &HashMap<Vec<u8>, Vec<Vec<u8>>>) -> (Vec<Vec<u8>>, Vec<f32>) {
-    let mut names: Vec<Vec<u8>> = Vec::new();
+pub fn build_condensed_distance_matrix(target:&HashMap<Vec<u8>, Vec<Vec<u8>>>) -> (Vec<Vec<u8>>, Vec<f32>) {
     let mut condensed = vec![];
-    for name in target.keys() {
-        names.push(name.to_vec());
+    let mut names = vec![];
+    for key in target.keys() {
+        names.push(key.to_vec());
     }
     for row in 0..target.len() - 1 {
         for col in row + 1..target.len() {
