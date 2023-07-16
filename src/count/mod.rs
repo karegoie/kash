@@ -3,16 +3,8 @@ use needletail::*;
 use std::collections::HashMap;
 use rayon::prelude::*;
 
-fn set_parameters() -> HashMap<&'static str, &'static str> {
-    let mut parameters = HashMap::new();
-    parameters.insert("file", "data/test.fa");
-    parameters.insert("kmer", "3");
-    // parameters.insert("ploidy", "2");
-    parameters
-}
 
-pub fn read_and_count_parallel() -> HashMap<Vec<u8>, HashMap<Vec<u8>, usize>> {
-    let params = set_parameters(); // TODO: Remove it as an argument
+pub fn read_and_count_parallel(params: &HashMap<&str, &str>) -> HashMap<Vec<u8>, HashMap<Vec<u8>, usize>> {
     let filename = params["file"];
     let mut reader = parse_fastx_file(&filename).expect("valid path/file");
     let mut kmer_count: HashMap<Vec<u8>, HashMap<Vec<u8>, usize>> = HashMap::new();

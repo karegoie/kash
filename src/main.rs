@@ -5,11 +5,19 @@
 //use kash::getmer;
 //use kash::count;
 //use kodama::{Method, linkage, Dendrogram};
+use std::collections::HashMap;
 
 fn main() {
     todo!()
 }
 
+fn set_parameters() -> HashMap<&'static str, &'static str> {
+    let mut parameters = HashMap::new();
+    parameters.insert("file", "data/test.fa");
+    parameters.insert("kmer", "5");
+    parameters.insert("ploidy", "2");
+    parameters
+}
 
 #[cfg(test)]
 mod test {
@@ -20,7 +28,8 @@ mod test {
 
     #[test]
     fn test_dendrogram() {
-        let kmer_count = count::read_and_count_parallel();
+        let params = super::set_parameters();
+        let kmer_count = count::read_and_count_parallel(&params);
         //for (key, value) in kmer_count.iter() {
         //    for (kmer, count) in value.iter() {
         //        println!("{:?} {:?} {:?}", str::from_utf8(key).unwrap(), str::from_utf8(kmer).unwrap(), count);
@@ -34,7 +43,7 @@ mod test {
         //println!("{:?}", index);
         let kmer_count_has_index = getmer::get_mers_from_index_parallel(
             &kmer_count,
-            index[0],
+            index[params["ploidy"].parse::<usize>().unwrap() - 2],
             occurrence_values.1);
 
         // display kmer_count_has_index
