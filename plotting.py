@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import dendrogram
 import pickle
 
+# This script is to parse dendrogram string and draw the dendrogram
+
 # Load the pickle file
 with open('data/dendrogram.pkl', 'rb') as f:
     dendrogram_data = pickle.load(f)
@@ -10,7 +12,7 @@ with open('data/dendrogram.pkl', 'rb') as f:
 with open('data/names.pkl', 'rb') as f:
     names = pickle.load(f)
 
-# The input Dendrogram data (replace this with your actual data)
+# The input Dendrogram data
 dendrogram_data = """
 Dendrogram { steps: [Step { cluster1: 1, cluster2: 3, dissimilarity: 2.0, size: 2 }, Step { cluster1: 15, cluster2: 26, dissimilarity: 2.0, size: 2 },
 Step { cluster1: 33, cluster2: 56, dissimilarity: 2.0, size: 3 }, Step { cluster1: 4, cluster2: 16, dissimilarity: 2.0, size: 2 }, Step { cluster1: 5,
@@ -39,9 +41,13 @@ ep { cluster1: 53, cluster2: 107, dissimilarity: inf, size: 46 }, Step { cluster
 72, cluster2: 109, dissimilarity: inf, size: 56 }], observations: 56 }
 """
 
+# parse the string
+# remove the first and last line
 
 
-# Step 1: Parse the data into a list of dictionaries
+
+
+
 # Show the dendrogram plot
 plt.show()
 plt.show()

@@ -73,7 +73,11 @@ fn same_kmer_numer_as_distance(seq1: &Vec<Vec<u8>>, seq2: &Vec<Vec<u8>>) -> f32 
             }
         }
     }
-    (1f32)/ (distance as f32 / (seq1.len() + seq2.len()) as f32)
+    if distance != 0 {
+        (1f32)/ (distance as f32 / (seq1.len() + seq2.len()) as f32)
+    } else {
+        99999f32
+    }
 }
 
 pub fn build_condensed_distance_matrix(target:&HashMap<Vec<u8>, Vec<Vec<u8>>>) -> (Vec<Vec<u8>>, Vec<f32>) {
