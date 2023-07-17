@@ -74,9 +74,9 @@ fn same_kmer_numer_as_distance(seq1: &Vec<Vec<u8>>, seq2: &Vec<Vec<u8>>) -> f32 
         }
     }
     if distance != 0 {
-        (1f32)/ (distance as f32 / (seq1.len() + seq2.len()) as f32)
+        ((1f32)/ (distance as f32 / (seq1.len() + seq2.len()) as f32)).log10()
     } else {
-        99999f32
+        (99999f32).log10()
     }
 }
 

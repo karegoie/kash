@@ -13,8 +13,8 @@ fn main() {
 
 fn set_parameters() -> HashMap<&'static str, &'static str> {
     let mut parameters = HashMap::new();
-    parameters.insert("file", "data/cotton.fna");
-    parameters.insert("kmer", "5");
+    parameters.insert("file", "data/cotton.test.fna");
+    parameters.insert("kmer", "15");
     parameters.insert("ploidy", "2");
     parameters
 }
