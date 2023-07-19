@@ -35,7 +35,5 @@ dendrogram(linkage_matrix, labels=names)
 plt.xlabel('Observations')
 plt.ylabel('Distance')
 plt.title('Dendrogram')
-
-# Display the dendrogram
 plt.show()
 plt.savefig("data/dendrogram.png")

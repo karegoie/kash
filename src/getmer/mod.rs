@@ -18,28 +18,11 @@ pub fn differentiate(values: &Vec<usize>) -> Vec<i32> {
 pub fn find_index(derivatives: Vec<i32>) -> Vec<usize> {
     let mut index = Vec::new();
     for i in 0..derivatives.len() - 1 {
-        if derivatives[i] > 0 && derivatives[i+1] < 0 {
+        if derivatives[i] >= 0 && derivatives[i+1] < 0 {
             index.push(i);
         }
     }
     index
-}
-
-pub fn get_mers_from_index(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, u16>>, index: u16) -> HashMap<Vec<u8>, Vec<Vec<u8>>> {
-    let mut kmer_count_has_index: HashMap<Vec<u8>, Vec<Vec<u8>>> = HashMap::new();
-    for (key, value) in kmer_count.iter() {
-        for (kmer, count) in value.iter() {
-            // if count equals to index, insert into kmer_count_has_index
-            if *count == index + 1 {
-                if let Some(kmer_count_has_index_value) = kmer_count_has_index.get_mut(key) {
-                    kmer_count_has_index_value.push(kmer.to_vec());
-                } else {
-                    kmer_count_has_index.insert(key.to_vec(), vec![kmer.to_vec()]);
-                }
-            }
-        }
-    }
-    kmer_count_has_index
 }
 
 pub fn get_mers_from_index_parallel(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, usize>>, index: usize) -> HashMap<Vec<u8>, Vec<Vec<u8>>> {
@@ -109,4 +92,9 @@ pub fn to_pickle_with_serde_names(names: Vec<Vec<u8>>) {
 pub fn to_pickle_with_serde_dend(dend: Dendrogram<f32>) {
     let serialized = serde_pickle::to_vec(&format!("{:?}", dend), Default::default()).unwrap();
     std::fs::write("data/dendrogram.pkl", serialized).unwrap();
+}
+
+pub fn to_pickle_with_serde_vec(vec: &Vec<usize>) {
+    let serialized = serde_pickle::to_vec(vec, Default::default()).unwrap();
+    std::fs::write("data/vec.pkl", serialized).unwrap();
 }

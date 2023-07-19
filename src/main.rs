@@ -37,13 +37,15 @@ mod test {
         //}
         let occurrence_values = sort::sort::sort_by_coverage_wrap(&kmer_count);
         println!("{:?}", occurrence_values);
+        getmer::to_pickle_with_serde_vec(&occurrence_values);
+
         let derivatives = getmer::differentiate(&occurrence_values);
         println!("{:?}", derivatives);
         let index = getmer::find_index(derivatives);
         println!("{:?}", index);
         let kmer_count_has_index = getmer::get_mers_from_index_parallel(
             &kmer_count,
-            index[params["ploidy"].parse::<usize>().unwrap() - 2]);
+            index[params["ploidy"].parse::<usize>().unwrap() - 1]);
 
         // display kmer_count_has_index
         for (key, value) in kmer_count_has_index.iter() {
