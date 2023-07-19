@@ -42,12 +42,12 @@ pub fn get_mers_from_index(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, u16>>,
     kmer_count_has_index
 }
 
-pub fn get_mers_from_index_parallel(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, usize>>, index: usize, coverage_per_occurrence: HashMap<usize, Vec<usize>>) -> HashMap<Vec<u8>, Vec<Vec<u8>>> {
+pub fn get_mers_from_index_parallel(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, usize>>, index: usize) -> HashMap<Vec<u8>, Vec<Vec<u8>>> {
     let kmer_count_has_index: Arc<Mutex<HashMap<Vec<u8>, Vec<Vec<u8>>>>> = Arc::new(Mutex::new(HashMap::new()));
 
     kmer_count.par_iter().for_each(|(key, value)| {
         value.iter().for_each(|(kmer, count)| {
-            if coverage_per_occurrence[&(index + 1)].contains(count) {
+            if *count == index {
                 let mut kmer_count_has_index = kmer_count_has_index.lock().unwrap();
                 if let Some(kmer_count_has_index_value) = kmer_count_has_index.get_mut(key) {
                     kmer_count_has_index_value.push(kmer.to_vec());

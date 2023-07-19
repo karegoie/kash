@@ -13,8 +13,8 @@ fn main() {
 
 fn set_parameters() -> HashMap<&'static str, &'static str> {
     let mut parameters = HashMap::new();
-    parameters.insert("file", "data/cotton.test.fna");
-    parameters.insert("kmer", "15");
+    parameters.insert("file", "data/test.fa");
+    parameters.insert("kmer", "5");
     parameters.insert("ploidy", "2");
     parameters
 }
@@ -36,15 +36,14 @@ mod test {
         //    }
         //}
         let occurrence_values = sort::sort::sort_by_coverage_wrap(&kmer_count);
-        // println!("{:?}", occurrence_values.0);
-        let derivatives = getmer::differentiate(&occurrence_values.0);
-        //println!("{:?}", derivatives);
+        println!("{:?}", occurrence_values);
+        let derivatives = getmer::differentiate(&occurrence_values);
+        println!("{:?}", derivatives);
         let index = getmer::find_index(derivatives);
-        //println!("{:?}", index);
+        println!("{:?}", index);
         let kmer_count_has_index = getmer::get_mers_from_index_parallel(
             &kmer_count,
-            index[params["ploidy"].parse::<usize>().unwrap() - 2],
-            occurrence_values.1);
+            index[params["ploidy"].parse::<usize>().unwrap() - 2]);
 
         // display kmer_count_has_index
         for (key, value) in kmer_count_has_index.iter() {

@@ -37,20 +37,19 @@ pub mod sort {
         coverage
     }
 
-    pub fn sort_by_coverage_wrap(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, usize>>) -> (Vec<usize>, HashMap<usize, Vec<usize>>) {
+    pub fn sort_by_coverage_wrap(kmer_count: &HashMap<Vec<u8>, HashMap<Vec<u8>, usize>>) -> Vec<usize> {
         let kmer_occurence = occurence_count_parallel(kmer_count);
         //println!("{:?}", kmer_occurence);
-        let mut coverage_per_occurrence = HashMap::new();
-        for (key, value) in kmer_occurence.iter() {
-            coverage_per_occurrence.entry(*value).or_insert(Vec::new()).push(*key);
-        }
         //println!("coverage_per_occurrence {:?}", coverage_per_occurrence);
         let coverage_values = sort_by_coverage(kmer_occurence);
         // println!("{:?}", coverage_values);
+        //convert BTreeMap to HashMap
         let mut final_values: Vec<usize> = Vec::new();
-        for (_, value) in coverage_values.iter() {
-            final_values.push(*value);
+        for (key, value) in coverage_values.iter() {
+            for _ in 0..*key {
+                final_values.push(*value / *key);
+            }
         }
-        (final_values, coverage_per_occurrence) // Sorted values by occurrence (x-axis is k-mer occurrence, y-axis is number of k-mers)
+        final_values // Sorted values by occurrence (x-axis is k-mer occurrence, y-axis is number of k-mers)
     }
 }
