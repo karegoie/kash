@@ -14,8 +14,8 @@ fn main() {
 fn set_parameters() -> HashMap<&'static str, &'static str> {
     let mut parameters = HashMap::new();
     parameters.insert("file", "data/test.fa");
-    parameters.insert("kmer", "5");
-    parameters.insert("ploidy", "2");
+    parameters.insert("kmer", "13");
+    parameters.insert("ploidy", "4");
     parameters
 }
 

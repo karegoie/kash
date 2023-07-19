@@ -69,7 +69,7 @@ pub fn build_condensed_distance_matrix(target:&HashMap<Vec<u8>, Vec<Vec<u8>>>) -
     for key in target.keys() {
         names.push(key.to_vec());
     }
-    for row in 0..target.len() - 1 {
+    for row in 0..target.len() {
         for col in row + 1..target.len() {
             condensed.push(same_kmer_numer_as_distance(&target.values().nth(row).unwrap(), &target.values().nth(col).unwrap()));
         }
